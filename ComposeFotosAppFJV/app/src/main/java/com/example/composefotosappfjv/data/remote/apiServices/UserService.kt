@@ -9,7 +9,7 @@ import retrofit2.http.Query
 
 interface UserService {
     @POST("/auth/register")
-    suspend fun registerUser(@Body user: User): Response<LoginResponse>
+    suspend fun registerUser(@Body user: User): Response<Boolean>
 
     @GET("/auth/login")
     suspend fun loginUser(

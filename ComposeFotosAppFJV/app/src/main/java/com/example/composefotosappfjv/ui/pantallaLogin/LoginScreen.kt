@@ -12,13 +12,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import com.example.compose.R
+import com.example.composefotosappfjv.domain.modelo.User
 import com.example.composefotosappfjv.ui.common.UiEvent
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     showSnackbar: (String) -> Unit = {},
-    navigateToCanciones: (Int) -> Unit,
+    navigateToCanciones: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val loginName = remember { mutableStateOf("") }
@@ -31,6 +32,8 @@ fun LoginScreen(
         uiState.event?.let {
             if (it is UiEvent.ShowSnackbar) {
                 showSnackbar(it.message)
+            }else if(it is UiEvent.Navigate){
+                navigateToCanciones()
             }
             viewModel.handleEvent(LoginEvent.UiEventDone)
         }
@@ -108,7 +111,9 @@ fun LoginScreen(
         )
 
         Button(
-            onClick = { viewModel.handleEvent(LoginEvent.registerUser(registerName.value,registerPass.value, email.value)) },
+            onClick = {
+                 val user = User(registerName.value,registerPass.value,false, email.value)
+                viewModel.handleEvent(LoginEvent.registerUser(user)) },
             modifier = Modifier.padding(top = 10.dp)
         ) {
             Text(text = stringResource(R.string.registerText))

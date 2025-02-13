@@ -29,7 +29,7 @@ class LoginViewModel @Inject constructor(
 
     fun handleEvent(event: LoginEvent) {
         when (event) {
-            is LoginEvent.registerUser -> createUser(event.name,event.pass, event.email)
+            is LoginEvent.registerUser -> createUser(event.user)
             is LoginEvent.loginUser -> login(event.name,event.pass)
             LoginEvent.UiEventDone -> {
                 _uiState.update { it.copy(event = null) }
@@ -68,11 +68,11 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun createUser(name: String, pass: String, mail: String) {
+    private fun createUser(user: User) {
         viewModelScope.launch(dispatcher) {
             _uiState.update { it.copy(isLoading = true) }
 
-            registerUser.invoke(name, pass,mail).collect { result ->
+            registerUser.invoke(user).collect { result ->
                 when (result) {
                     is NetworkResult.Loading -> {
                         _uiState.update { it.copy(isLoading = true) }
