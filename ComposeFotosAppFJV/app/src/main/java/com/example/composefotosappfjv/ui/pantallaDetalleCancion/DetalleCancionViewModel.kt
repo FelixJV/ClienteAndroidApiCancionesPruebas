@@ -7,8 +7,14 @@ import com.example.composefotosappfjv.domain.usecases.fotoUsecase.DeleteFoto
 import com.example.composefotosappfjv.domain.usecases.fotoUsecase.GetFoto
 import com.example.composefotosappfjv.domain.usecases.fotoUsecase.UpdateFoto
 import com.example.composefotosappfjv.data.remote.NetworkResult
+import com.example.composefotosappfjv.domain.modelo.Cancion
+import com.example.composefotosappfjv.domain.usecases.cancionUsecases.AddCancion
+import com.example.composefotosappfjv.domain.usecases.cancionUsecases.DeleteCancion
+import com.example.composefotosappfjv.domain.usecases.cancionUsecases.GetCancion
+import com.example.composefotosappfjv.domain.usecases.cancionUsecases.UpdateCancion
 import com.example.composefotosappfjv.util.Constantes
 import com.example.composefotosappfjv.ui.common.UiEvent
+import com.example.composefotosappfjv.ui.pantallaLogin.LoginEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,9 +25,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetalleCancionViewModel @Inject constructor(
-    private val getFotoUseCase: GetFoto,
-    private val updateFotoUseCase: UpdateFoto,
-    private val deleteFotoUseCase: DeleteFoto,
+    private val getCancionUseCase: GetCancion,
+    private val updateCancionUseCase: UpdateCancion,
+    private val deleteCancionUseCase: DeleteCancion,
+    private val addCancionUseCase: AddCancion,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -30,24 +37,28 @@ class DetalleCancionViewModel @Inject constructor(
 
     fun handleEvent(event: DetalleCancionEvent) {
         when (event) {
-            is DetalleCancionEvent.ActualizarFoto -> actualizarFoto(event.foto)
-            is DetalleCancionEvent.DeleteFoto -> eliminarFoto(event.id)
-            is DetalleCancionEvent.GetFoto -> getFoto(event.idFoto)
             is DetalleCancionEvent.errorMostrado -> eventConsumido()
+            is DetalleCancionEvent.ActualizarCancion -> actualizarCancion(event.cancion, token)
+            is DetalleCancionEvent.AddCancion -> addCancion(event.cancion, token)
+            is DetalleCancionEvent.DeleteCancion -> eliminarCancion(event.id, token)
+            is DetalleCancionEvent.GetCancion -> getCancion(event.id, token)
+            is DetalleCancionEvent.UiEventDone -> {
+                _uiState.update { it.copy(event = null) }
+            }
         }
     }
 
-    private fun getFoto(fotoId: Int) {
+    private fun getCancion(id: Int,token: String) {
         viewModelScope.launch(dispatcher) {
             _uiState.update { it.copy(isLoading = true) }
 
-            getFotoUseCase.invoke(fotoId).collect { result ->
+            getCancionUseCase.invoke(id, token).collect { result ->
                 when (result) {
                     is NetworkResult.Error -> {
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                event = UiEvent.ShowSnackbar(Constantes.ERROR_OBTENER_FOTO)
+                                event = UiEvent.ShowSnackbar(Constantes.ERROR_OBTENER_CANCION)
                             )
                         }
                     }
@@ -55,7 +66,69 @@ class DetalleCancionViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                foto = result.data
+                                cancion = result.data,
+                                event = UiEvent.PopBackStack
+                            )
+                        }
+
+                    }
+                    is NetworkResult.Loading -> {
+                        _uiState.update { it.copy(isLoading = true) }
+                    }
+                }
+            }
+        }
+    }
+    private fun addCancion(cancion: Cancion, token: String) {
+        viewModelScope.launch(dispatcher) {
+            _uiState.update { it.copy(isLoading = true) }
+
+            addCancionUseCase.invoke(cancion, token).collect { result ->
+                when (result) {
+                    is NetworkResult.Error -> {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                event = UiEvent.ShowSnackbar(Constantes.ERROR_ANYADIR_CANCION)
+                            )
+                        }
+                    }
+                    is NetworkResult.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                cancion = cancion,
+                                event = UiEvent.ShowSnackbar(Constantes.CANCION_OBTENIDA)
+                            )
+                        }
+                    }
+                    is NetworkResult.Loading -> {
+                        _uiState.update { it.copy(isLoading = true) }
+                    }
+                }
+            }
+        }
+    }
+    private fun actualizarCancion(cancion: Cancion, token: String) {
+        viewModelScope.launch(dispatcher) {
+            _uiState.update { it.copy(isLoading = true) }
+
+            updateCancionUseCase.invoke(cancion.id, cancion, token).collect { result ->
+                when (result) {
+                    is NetworkResult.Error -> {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                event = UiEvent.ShowSnackbar(Constantes.ERROR_ACTUALIZAR_CANCION)
+                            )
+                        }
+                    }
+                    is NetworkResult.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                cancion = cancion,
+                                event = UiEvent.ShowSnackbar(Constantes.CANCION_ACTUALIZADA)
                             )
                         }
                     }
@@ -67,48 +140,17 @@ class DetalleCancionViewModel @Inject constructor(
         }
     }
 
-    private fun actualizarFoto(foto: Foto) {
+    private fun eliminarCancion(id: Int, token: String) {
         viewModelScope.launch(dispatcher) {
             _uiState.update { it.copy(isLoading = true) }
 
-            updateFotoUseCase.invoke(foto.idFoto, foto).collect { result ->
-                when (result) {
-                    is NetworkResult.Error -> {
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                event = UiEvent.ShowSnackbar(Constantes.ERROR_ACTUALIZAR_FOTO)
-                            )
-                        }
-                    }
-                    is NetworkResult.Success -> {
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                foto = foto,
-                                event = UiEvent.ShowSnackbar(Constantes.FOTO_ACTUALIZADA)
-                            )
-                        }
-                    }
-                    is NetworkResult.Loading -> {
-                        _uiState.update { it.copy(isLoading = true) }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun eliminarFoto(fotoId: Int) {
-        viewModelScope.launch(dispatcher) {
-            _uiState.update { it.copy(isLoading = true) }
-
-            deleteFotoUseCase.invoke(fotoId).collect { result ->
+            deleteCancionUseCase.invoke(id,token).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                event = UiEvent.ShowSnackbar(Constantes.FOTO_ELIMINADA)
+                                event = UiEvent.ShowSnackbar(Constantes.CANCION_ELIMINADA)
                             )
                         }
                     }
@@ -116,7 +158,7 @@ class DetalleCancionViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                event = UiEvent.ShowSnackbar(Constantes.ERROR_ELIMINAR_FOTO)
+                                event = UiEvent.ShowSnackbar(Constantes.ERROR_ELIMINAR_CANCION)
                             )
                         }
                     }
