@@ -12,17 +12,17 @@ import retrofit2.http.Path
 
 interface CancionService {
     @GET("playlist")
-    suspend fun getCanciones(@Header("Authorization") token: String): Response<List<Cancion>>
+    suspend fun getCanciones(): Response<List<Cancion>>
 
     @GET("playlist/{id}")
-    suspend fun getCancion(@Header("Authorization") token: String, @Path("id") id: Int): Response<Cancion>
+    suspend fun getCancion(@Path("id") id: Int): Response<Cancion>
 
     @POST("playlist")
-    suspend fun addSong(@Header("Authorization") token: String, @Body song: Cancion): Response<String>
+    suspend fun addSong(@Body song: Cancion): Response<String>
 
     @PUT("playlist/{id}")
-    suspend fun updateSong(@Header("Authorization") token: String, @Path("id") id: Int, @Body song: Cancion): Response<String>
+    suspend fun updateSong(@Path("id") id: Int, @Body song: Cancion): Response<String>
 
     @DELETE("playlist/{id}")
-    suspend fun deleteSong(@Header("Authorization") token: String, @Path("id") id: Int): Response<String>
+    suspend fun deleteSong(@Path("id") id: Int): Response<String>
 }

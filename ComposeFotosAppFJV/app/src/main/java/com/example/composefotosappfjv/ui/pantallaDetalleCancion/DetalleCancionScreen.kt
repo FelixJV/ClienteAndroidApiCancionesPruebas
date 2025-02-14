@@ -45,8 +45,8 @@ fun DetalleCancionScreen(
 
     LaunchedEffect(uiState.cancion) {
         uiState.cancion.let {
-            nombrePerfil = it.nombre
-            nombreArtista = it.artista
+            nombrePerfil = it?.nombre.toString()
+            nombreArtista = it?.artista.toString()
         }
     }
 
@@ -96,7 +96,11 @@ fun DetalleCancionScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(onClick = {
-                viewModel.handleEvent(DetalleCancionEvent.DeleteCancion(uiState.cancion.id))
+                uiState.cancion?.id?.let {
+                    DetalleCancionEvent.DeleteCancion(
+                        it
+                    )
+                }?.let { viewModel.handleEvent(it) }
             }) {
                 Text(text = "Eliminar")
             }
@@ -107,8 +111,9 @@ fun DetalleCancionScreen(
                 Text(text = "Añadir")
             }
             Button(onClick = {
-                val cancion = Cancion(uiState.cancion.id, nombrePerfil, nombreArtista)
-                viewModel.handleEvent(DetalleCancionEvent.ActualizarCancion(cancion, cancion.id))
+                val cancion = uiState.cancion?.id?.let { Cancion(it, nombrePerfil, nombreArtista) }
+                cancion?.let { DetalleCancionEvent.ActualizarCancion(it, cancion.id) }
+                    ?.let { viewModel.handleEvent(it) }
             }) {
                 Text(text = "Update")
             }

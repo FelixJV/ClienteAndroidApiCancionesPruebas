@@ -2,19 +2,16 @@ package com.example.composefotosappfjv.ui.pantallaDetalleCancion
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.composefotosappfjv.data.remote.di.IoDispatcher
-import com.example.composefotosappfjv.domain.usecases.fotoUsecase.DeleteFoto
-import com.example.composefotosappfjv.domain.usecases.fotoUsecase.GetFoto
-import com.example.composefotosappfjv.domain.usecases.fotoUsecase.UpdateFoto
 import com.example.composefotosappfjv.data.remote.NetworkResult
+import com.example.composefotosappfjv.data.remote.di.IoDispatcher
+import com.example.composefotosappfjv.data.remote.di.PreferenceRepository
 import com.example.composefotosappfjv.domain.modelo.Cancion
 import com.example.composefotosappfjv.domain.usecases.cancionUsecases.AddCancion
 import com.example.composefotosappfjv.domain.usecases.cancionUsecases.DeleteCancion
 import com.example.composefotosappfjv.domain.usecases.cancionUsecases.GetCancion
 import com.example.composefotosappfjv.domain.usecases.cancionUsecases.UpdateCancion
-import com.example.composefotosappfjv.util.Constantes
 import com.example.composefotosappfjv.ui.common.UiEvent
-import com.example.composefotosappfjv.ui.pantallaLogin.LoginEvent
+import com.example.composefotosappfjv.util.Constantes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,21 +35,21 @@ class DetalleCancionViewModel @Inject constructor(
     fun handleEvent(event: DetalleCancionEvent) {
         when (event) {
             is DetalleCancionEvent.errorMostrado -> eventConsumido()
-            is DetalleCancionEvent.ActualizarCancion -> actualizarCancion(event.cancion, token)
-            is DetalleCancionEvent.AddCancion -> addCancion(event.cancion, token)
-            is DetalleCancionEvent.DeleteCancion -> eliminarCancion(event.id, token)
-            is DetalleCancionEvent.GetCancion -> getCancion(event.id, token)
+            is DetalleCancionEvent.ActualizarCancion -> actualizarCancion(event.cancion)
+            is DetalleCancionEvent.AddCancion -> addCancion(event.cancion)
+            is DetalleCancionEvent.DeleteCancion -> eliminarCancion(event.id)
+            is DetalleCancionEvent.GetCancion -> getCancion(event.id)
             is DetalleCancionEvent.UiEventDone -> {
                 _uiState.update { it.copy(event = null) }
             }
         }
     }
 
-    private fun getCancion(id: Int,token: String) {
+    private fun getCancion(id: Int) {
         viewModelScope.launch(dispatcher) {
             _uiState.update { it.copy(isLoading = true) }
 
-            getCancionUseCase.invoke(id, token).collect { result ->
+            getCancionUseCase.invoke(id).collect { result ->
                 when (result) {
                     is NetworkResult.Error -> {
                         _uiState.update {
@@ -79,11 +76,11 @@ class DetalleCancionViewModel @Inject constructor(
             }
         }
     }
-    private fun addCancion(cancion: Cancion, token: String) {
+    private fun addCancion(cancion: Cancion,) {
         viewModelScope.launch(dispatcher) {
             _uiState.update { it.copy(isLoading = true) }
 
-            addCancionUseCase.invoke(cancion, token).collect { result ->
+            addCancionUseCase.invoke(cancion).collect { result ->
                 when (result) {
                     is NetworkResult.Error -> {
                         _uiState.update {
@@ -109,11 +106,11 @@ class DetalleCancionViewModel @Inject constructor(
             }
         }
     }
-    private fun actualizarCancion(cancion: Cancion, token: String) {
+    private fun actualizarCancion(cancion: Cancion) {
         viewModelScope.launch(dispatcher) {
             _uiState.update { it.copy(isLoading = true) }
 
-            updateCancionUseCase.invoke(cancion.id, cancion, token).collect { result ->
+            updateCancionUseCase.invoke(cancion.id, cancion).collect { result ->
                 when (result) {
                     is NetworkResult.Error -> {
                         _uiState.update {
@@ -140,11 +137,11 @@ class DetalleCancionViewModel @Inject constructor(
         }
     }
 
-    private fun eliminarCancion(id: Int, token: String) {
+    private fun eliminarCancion(id: Int) {
         viewModelScope.launch(dispatcher) {
             _uiState.update { it.copy(isLoading = true) }
 
-            deleteCancionUseCase.invoke(id,token).collect { result ->
+            deleteCancionUseCase.invoke(id).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
                         _uiState.update {

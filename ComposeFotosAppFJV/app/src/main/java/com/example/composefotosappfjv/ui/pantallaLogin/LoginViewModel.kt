@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composefotosappfjv.data.remote.di.IoDispatcher
 import com.example.composefotosappfjv.data.remote.NetworkResult
+import com.example.composefotosappfjv.data.remote.di.PreferencesRepository
 import com.example.composefotosappfjv.domain.modelo.User
 import com.example.composefotosappfjv.domain.usecases.userUsecase.GetUser
 import com.example.composefotosappfjv.domain.usecases.userUsecase.RegisterUser
@@ -21,11 +22,13 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val getUserUseCase: GetUser,
     private val registerUser: RegisterUser,
+    private val preferencesRepository: PreferencesRepository,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginState())
     val uiState = _uiState.asStateFlow()
+    val accessToken = preferencesRepository.accessToken
 
     fun handleEvent(event: LoginEvent) {
         when (event) {
@@ -55,12 +58,14 @@ class LoginViewModel @Inject constructor(
                         _uiState.update { it.copy(isLoading = true) }
                     }
                     is NetworkResult.Success -> {
-                        val token = result.data
+                        val accessToken = result.data
 
                             _uiState.update {
                                 it.copy(isLoading = false, userEncontrado = true, event = UiEvent.Navigate("asasd"))
                             }
-
+                            viewModelScope.launch {
+                                preferencesRepository.saveTokens(accessToken)
+                        }
 
                     }
                 }

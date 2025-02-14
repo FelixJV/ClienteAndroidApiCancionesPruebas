@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetCanciones @Inject constructor(private val cancionRepository: CancionRepository){
-    suspend operator fun invoke(token:String) : Flow<NetworkResult<List<Cancion>>> = cancionRepository.fetchCanciones(token)
+    suspend operator fun invoke() : Flow<NetworkResult<List<Cancion>>> = cancionRepository.fetchCanciones()
 }

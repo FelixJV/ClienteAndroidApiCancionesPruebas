@@ -35,7 +35,7 @@ class CancionesViewModel @Inject constructor(
         viewModelScope.launch(dispatcher) {
             _uiState.update { it.copy(isLoading = true) }
 
-            getCancionesUseCase.invoke(token = "").collect { result ->
+            getCancionesUseCase.invoke().collect { result ->
                 when (result) {
                     is NetworkResult.Error -> {
                         _uiState.update {

@@ -9,18 +9,18 @@ class CancionDataSource @Inject constructor(
     private val plServices: CancionService
 ) : BaseApiResponse() {
 
-    suspend fun fetchCanciones(token: String): NetworkResult<List<Cancion>> =
-        safeApiCall { plServices.getCanciones(token) }
+    suspend fun fetchCanciones(): NetworkResult<List<Cancion>> =
+        safeApiCall { plServices.getCanciones() }
 
-    suspend fun fetchCancion(id: Int, token: String): NetworkResult<Cancion> =
-        safeApiCall { plServices.getCancion(token, id) }
+    suspend fun fetchCancion(id: Int): NetworkResult<Cancion> =
+        safeApiCall { plServices.getCancion(id) }
 
-    suspend fun updateCancion(token: String, id: Int, cancion: Cancion): NetworkResult<String> =
-        safeApiCall { plServices.updateSong(token, id, cancion) }
+    suspend fun updateCancion(id: Int, cancion: Cancion): NetworkResult<String> =
+        safeApiCall { plServices.updateSong(id, cancion) }
 
-    suspend fun deleteCancion(token: String, id: Int): NetworkResult<String> =
-        safeApiCall { plServices.deleteSong(token, id) }
+    suspend fun deleteCancion( id: Int): NetworkResult<String> =
+        safeApiCall { plServices.deleteSong(id) }
 
-    suspend fun addCancion(token: String,cancion: Cancion): NetworkResult<String> =
-        safeApiCall { plServices.addSong(token, cancion) }
+    suspend fun addCancion(cancion: Cancion): NetworkResult<String> =
+        safeApiCall { plServices.addSong(cancion) }
 }

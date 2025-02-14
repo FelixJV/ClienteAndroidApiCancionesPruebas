@@ -6,4 +6,4 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class DeleteCancion @Inject constructor(private val cancionRepository: CancionRepository) {
-    suspend operator fun invoke(id: Int, token:String) : Flow<NetworkResult<Unit>> = cancionRepository.deleteCancion(id,token)}
+    suspend operator fun invoke(id: Int) : Flow<NetworkResult<Unit>> = cancionRepository.deleteCancion(id)}
