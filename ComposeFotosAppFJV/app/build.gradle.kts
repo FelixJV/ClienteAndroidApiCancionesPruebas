@@ -113,7 +113,7 @@ dependencies {
     implementation(libs.androidx.adaptive.android)
 
 
-
+    implementation(libs.androidx.datastore.preferences)
 
     kapt(libs.hilt.compiler)
 
