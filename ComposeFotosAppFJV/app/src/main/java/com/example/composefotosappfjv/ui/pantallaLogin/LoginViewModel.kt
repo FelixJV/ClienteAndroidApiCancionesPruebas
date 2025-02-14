@@ -2,14 +2,14 @@ package com.example.composefotosappfjv.ui.pantallaLogin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.composefotosappfjv.data.remote.di.IoDispatcher
 import com.example.composefotosappfjv.data.remote.NetworkResult
-import com.example.composefotosappfjv.data.remote.di.PreferencesRepository
+import com.example.composefotosappfjv.data.remote.di.IoDispatcher
+import com.example.composefotosappfjv.data.remote.di.PreferenceRepository
 import com.example.composefotosappfjv.domain.modelo.User
 import com.example.composefotosappfjv.domain.usecases.userUsecase.GetUser
 import com.example.composefotosappfjv.domain.usecases.userUsecase.RegisterUser
-import com.example.composefotosappfjv.util.Constantes
 import com.example.composefotosappfjv.ui.common.UiEvent
+import com.example.composefotosappfjv.util.Constantes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,13 +22,12 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val getUserUseCase: GetUser,
     private val registerUser: RegisterUser,
-    private val preferencesRepository: PreferencesRepository,
+    private val preferencesRepository: PreferenceRepository,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginState())
     val uiState = _uiState.asStateFlow()
-    val accessToken = preferencesRepository.accessToken
 
     fun handleEvent(event: LoginEvent) {
         when (event) {
@@ -102,6 +101,7 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
 
 
 }
