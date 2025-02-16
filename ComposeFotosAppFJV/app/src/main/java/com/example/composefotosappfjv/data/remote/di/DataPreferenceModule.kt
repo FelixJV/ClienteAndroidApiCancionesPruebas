@@ -6,6 +6,7 @@ import com.example.composefotosappfjv.data.remote.di.PreferenceRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -15,7 +16,7 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun providePreferenceDataStore(context: Context): PreferenceDataStore {
+    fun providePreferenceDataStore(@ApplicationContext context: Context): PreferenceDataStore {
         return PreferenceDataStore(context)
     }
 

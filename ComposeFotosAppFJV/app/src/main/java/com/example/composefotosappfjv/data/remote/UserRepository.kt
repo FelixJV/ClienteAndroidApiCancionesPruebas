@@ -1,5 +1,6 @@
 package com.example.composefotosappfjv.data.remote
 
+import com.example.composefotosappfjv.data.remote.apiServices.LoginResponse
 import com.example.composefotosappfjv.data.remote.dataSource.UserDataSource
 import com.example.composefotosappfjv.data.remote.di.IoDispatcher
 import com.example.composefotosappfjv.domain.modelo.User
@@ -22,7 +23,7 @@ class UserRepository @Inject constructor(
         }.flowOn(dispatcher)
     }
 
-    suspend fun fetchUser(name: String, pass: String): Flow<NetworkResult<String>> {
+    suspend fun fetchUser(name: String, pass: String): Flow<NetworkResult<LoginResponse>> {
         return flow {
             emit(NetworkResult.Loading())
             val result = userDataSource.fetchUser(name, pass)

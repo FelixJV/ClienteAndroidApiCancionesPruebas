@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,11 +43,10 @@ fun DetalleCancionScreen(
     var nombrePerfil by remember { mutableStateOf("") }
     var nombreArtista by remember { mutableStateOf("") }
 
-
     LaunchedEffect(uiState.cancion) {
-        uiState.cancion.let {
-            nombrePerfil = it?.nombre.toString()
-            nombreArtista = it?.artista.toString()
+        uiState.cancion?.let {
+            nombrePerfil = it.nombre
+            nombreArtista = it.artista
         }
     }
 
@@ -61,47 +61,26 @@ fun DetalleCancionScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         OutlinedTextField(
             value = nombrePerfil,
             onValueChange = { nombrePerfil = it },
             label = { Text("Título") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
         )
         OutlinedTextField(
             value = nombreArtista,
             onValueChange = { nombreArtista = it },
             label = { Text("Artista") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
         )
 
         Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "Cambia los valores y dale a añadir para insertar una nueva canción",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.weight(1f))
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(onClick = {
-                uiState.cancion?.id?.let {
-                    DetalleCancionEvent.DeleteCancion(
-                        it
-                    )
-                }?.let { viewModel.handleEvent(it) }
-            }) {
+            Button(onClick = { uiState.cancion?.id?.let { viewModel.handleEvent(DetalleCancionEvent.DeleteCancion(it)) } }) {
                 Text(text = "Eliminar")
             }
             Button(onClick = {
@@ -112,11 +91,19 @@ fun DetalleCancionScreen(
             }
             Button(onClick = {
                 val cancion = uiState.cancion?.id?.let { Cancion(it, nombrePerfil, nombreArtista) }
-                cancion?.let { DetalleCancionEvent.ActualizarCancion(it, cancion.id) }
-                    ?.let { viewModel.handleEvent(it) }
+                cancion?.let { viewModel.handleEvent(DetalleCancionEvent.ActualizarCancion(it, cancion.id)) }
             }) {
                 Text(text = "Update")
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewDetalleCancionScreen() {
+    DetalleCancionScreen(
+        showSnackbar = { println("Snackbar: $it") },
+        id = 1
+    )
 }

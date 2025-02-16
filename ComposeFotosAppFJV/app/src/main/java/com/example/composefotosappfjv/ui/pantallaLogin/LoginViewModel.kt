@@ -57,13 +57,13 @@ class LoginViewModel @Inject constructor(
                         _uiState.update { it.copy(isLoading = true) }
                     }
                     is NetworkResult.Success -> {
-                        val accessToken = result.data
+                        val loginResponse = result.data
 
                             _uiState.update {
                                 it.copy(isLoading = false, userEncontrado = true, event = UiEvent.Navigate("asasd"))
                             }
                             viewModelScope.launch {
-                                preferencesRepository.saveTokens(accessToken)
+                                preferencesRepository.saveTokens(loginResponse)
                         }
 
                     }

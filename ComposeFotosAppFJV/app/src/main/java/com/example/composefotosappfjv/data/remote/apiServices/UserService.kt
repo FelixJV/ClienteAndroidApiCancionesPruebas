@@ -8,15 +8,16 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface UserService {
-    @POST("/auth/register")
+    @POST("/auth")
     suspend fun registerUser(@Body user: User): Response<Boolean>
 
-    @GET("/auth/login")
+    @GET("/auth")
     suspend fun loginUser(
         @Query("nombre") nombre: String,
         @Query("password") password: String
-    ): Response<String>
-
+    ): Response<LoginResponse>
+    @POST("/auth/refresh")
+    suspend fun refreshToken(@Body refreshToken: String): Response<LoginResponse>
 }
 data class LoginResponse(
     val accessToken: String,
