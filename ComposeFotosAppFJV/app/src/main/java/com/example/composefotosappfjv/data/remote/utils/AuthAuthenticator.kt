@@ -10,6 +10,7 @@ import okhttp3.Response
 import okhttp3.Route
 import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Inject
+import dagger.Lazy
 
 class AuthAuthenticator @Inject constructor(
     private val tokenManager: PreferenceDataStore,
@@ -40,6 +41,6 @@ class AuthAuthenticator @Inject constructor(
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
-        return service.value.refreshToken("Bearer $refreshToken")
+        return service.get().refreshToken("Bearer $refreshToken")
     }
 }

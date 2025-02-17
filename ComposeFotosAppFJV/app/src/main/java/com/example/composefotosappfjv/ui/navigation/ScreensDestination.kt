@@ -10,12 +10,10 @@ sealed interface Destination {
     }
 
     @Serializable
-    data class DetalleCancionDestination(val id: Int) : Destination {
-        companion object {
-            const val route = "detalleCancion/{id}"
+    object DetalleCancionDestination : Destination {
+        const val route = "detalleCancion/{id}"
 
-            fun createRoute(id: Int) = "detalleCancion/$id"
-        }
+        fun createRoute(id: Int) = "detalleCancion/$id"
     }
 
     @Serializable
@@ -23,3 +21,4 @@ sealed interface Destination {
         const val route = "login"
     }
 }
+

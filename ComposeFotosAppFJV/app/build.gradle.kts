@@ -29,11 +29,11 @@ android {
     productFlavors {
         create("development") {
             dimension = "env"
-            buildConfigField("String", "API_URL", "\"https://jsonplaceholder.typicode.com\"")
+            buildConfigField("String", "API_URL", "\"http://10.2.3.113:8080\"")
         }
         create("production") {
             dimension = "env"
-            buildConfigField("String", "API_URL", "\"https://jsonplaceholder.typicode.com\"")
+            buildConfigField("String", "API_URL", "\"http://10.2.3.113:8080\"")
         }
     }
 

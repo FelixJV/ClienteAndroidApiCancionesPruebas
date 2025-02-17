@@ -1,5 +1,6 @@
 package com.example.composefotosappfjv.ui.common
 
+import android.annotation.SuppressLint
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -15,6 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.composefotosappfjv.ui.navigation.Destination
 
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun BottomBar(
     navController: NavController,

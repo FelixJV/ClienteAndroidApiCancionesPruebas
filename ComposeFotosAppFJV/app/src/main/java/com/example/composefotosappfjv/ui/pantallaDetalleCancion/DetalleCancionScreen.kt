@@ -43,6 +43,9 @@ fun DetalleCancionScreen(
     var nombrePerfil by remember { mutableStateOf("") }
     var nombreArtista by remember { mutableStateOf("") }
 
+    LaunchedEffect(id) {
+        viewModel.handleEvent(DetalleCancionEvent.GetCancion(id))
+    }
     LaunchedEffect(uiState.cancion) {
         uiState.cancion?.let {
             nombrePerfil = it.nombre

@@ -14,10 +14,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.composefotosappfjv.ui.common.BottomBar
 import com.example.composefotosappfjv.ui.common.TopBar
 import com.example.composefotosappfjv.ui.navigation.Destination.LoginDestination
@@ -90,16 +92,23 @@ fun Navigation() {
                     navController.navigate(Destination.CancionesDestination.route)
                 })
             }
+
             composable(Destination.CancionesDestination.route) {
                 CancionesScreen(navigateToDetalle = { id ->
                     navController.navigate(Destination.DetalleCancionDestination.createRoute(id))
                 })
             }
-            composable(Destination.DetalleCancionDestination.route) { backStackEntry ->
-                val id = backStackEntry.arguments?.getString("id")?.toInt() ?: 0
+
+            composable(
+                route = Destination.DetalleCancionDestination.route,
+                arguments = listOf(navArgument("id") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val id = backStackEntry.arguments?.getInt("id") ?: 0
                 DetalleCancionScreen(id = id)
             }
+
         }
+
     }
 
 }
